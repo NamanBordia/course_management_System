@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Course Management</title>
+    <link rel="stylesheet" href="/static/st.css">
+</head>
+<body>
+    <h1>Course Management</h1>
+    
+    <!-- Display list of courses -->
+    <h2>All Courses</h2>
+    <ul>
+        {% for course in courses %}
+            <li>ID: {{ course[0] }}, Title: {{ course[1] }}, Description: {{ course[2] }}, Instructor: {{ course[3] }}, Duration: {{ course[4] }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Add a new course -->
+    <h2>Add Course</h2>
+    <form action="/add" method="post">
+        Title: <input type="text" name="title" required><br>
+        Description: <input type="text" name="description" required><br>
+        Instructor: <input type="text" name="instructor" required><br>
+        Duration: <input type="number" name="duration" required><br>
+        <input type="submit" value="Add Course">
+    </form>
+
+    <!-- Update a course -->
+    <h2>Update Course</h2>
+    <form action="/update" method="post">
+        ID: <input type="number" name="id" required><br>
+        Title: <input type="text" name="title"><br>
+        Description: <input type="text" name="description"><br>
+        Instructor: <input type="text" name="instructor"><br>
+        Duration: <input type="number" name="duration"><br>
+        <input type="submit" value="Update Course">
+    </form>
+
+    <!-- Delete a course -->
+    <h2>Delete Course</h2>
+    <form action="/delete" method="post">
+        ID: <input type="number" name="id" required><br>
+        <input type="submit" value="Delete Course">
+    </form>
+
+    <!-- Search for courses -->
+    
+    <h2>Search course</h2>
+    <form action="/search" method="get">
+        Query: <input type="text" name="query"><br>
+        <input type="submit" value="Search">
+    </form>
+
+    <div id="search-results"></div>
+    
+    <!-- Script to handle search results -->
+    <script>
+        document.querySelector('form[action="/search"]').addEventListener('submit', function(event) {
+            event.preventDefault();
+            fetch(`/search?query=${document.querySelector('input[name="query"]').value}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsDiv = document.getElementById('search-results');
+                    resultsDiv.innerHTML = '';
+                    data.forEach(book => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `ID: ${book[0]}, Title: ${book[1]}, Author: ${book[2]}, Year: ${book[3]}`;
+                        resultsDiv.appendChild(listItem);
+                    });
+                });
+        });
+    </script>
+</body>
+</html>
